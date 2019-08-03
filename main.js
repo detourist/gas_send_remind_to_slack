@@ -112,15 +112,15 @@ function sendRemindToSlack() {
     //【条件】
     //週が"0"(毎週)であり、曜日がweekCharを含む
     //または　週がweekNumMinusを含み、曜日がweekCharを含む
-    //または　週がweekNumを含み、曜日がweekCharを含む
+    //または　週がweekNumを含み（週が「-1」のときに「1」でヒットしないよう「weekNumの直前にマイナスが付いていない」条件で検索する）、曜日がweekCharを含む
     //または　週が"月"、曜日が"初"であり、今日の日付がfirstBizDateと一致する
     //または　週が"月"、曜日が"末"であり、今日の日付がlastBizDateと一致する
     //そのいずれにおいても　時刻が現在（Script実行）時刻からマイナス10分以内である
     if(
       (
-        (items[i][0]=="0" && items[i][1].indexOf(weekChar) !== -1)
-        || (items[i][0].indexOf(weekNumMinus) !== -1 && items[i][1].indexOf(weekChar) !== -1)
-        || (items[i][0].indexOf(weekNum) !== -1 && items[i][1].indexOf(weekChar) !== -1)
+        (items[i][0]=="0" && regChar.test(items[i][1]))
+        || (regMinus.test(items[i][0]) && regChar.test(items[i][1]))
+        || (regNotMinus.test(items[i][0]) && regChar.test(items[i][1]))
         || (items[i][0]=="月" && items[i][1]=="初" && date.getTime() == firstBizDate.getTime()) 
         || (items[i][0]=="月" && items[i][1]=="末" && date.getTime() == lastBizDate.getTime())
         //JavaScript の日付を比較するときに、演算子の両側の日付が同じオブジェクトを参照している場合にだけ == 演算子が true を返すことを念頭に置く必要があります。 
